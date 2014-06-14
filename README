@@ -2,3 +2,5 @@ Amateur C console project
 
 PokEasy is a console-based game project under GNU GPL license.
 We do not own Pokemon in any way. Pokemon and every associated trademark belongs to their respective owners.
+
+To run, just use "make" then "Pokeasy" in the prompt.
