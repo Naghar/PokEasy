@@ -1,105 +1,89 @@
 #include "p_rencontre.h"
-/*
-Rencontre creerRencontre (int ID_espece, int niveau_min, int niveau_max)
+
+_rencontre initRencontre (int ID_espece, int niveau_min, int niveau_max)
 {
-    Rencontre r = NULL;
-    r = (Rencontre) malloc(sizeof(struct _rencontre));
-
-    CHECK_NULL_ERROR(r)
-
-    initRencontre(r, ID_espece, niveau_min, niveau_max);
-
-    return r;
+	_rencontre r;
+	
+	r.r_ID_espece = ID_espece;
+	r.r_niveau_min = niveau_min;
+	r.r_niveau_max = niveau_max;
+	
+	return r;
 }
 
-void initRencontre (Rencontre r, int ID_espece, int niveau_min, int niveau_max)
+Rencontre creerRencontre (_rencontre rencontre)
 {
-    CHECK_NULL_ERROR(r)
+	Rencontre r = NULL;
+	r = malloc(sizeof(*r));
+	CHECK_NULL(r)
 
-    if (ID_espece < 0 || ID_espece > NBR_ESPECES) ID_espece = 1;
-    if (niveau_min < 0 || niveau_min > MAX_NIVEAU) niveau_min = 1;
-    if (niveau_max < niveau_min || niveau_max > MAX_NIVEAU) niveau_max = MAX_NIVEAU;
+	if (rencontre.r_ID_espece < 0 || rencontre.r_ID_espece > nbr_especes) rencontre.r_ID_espece = 0;
+	if (rencontre.r_niveau_min < MIN_NIVEAU || rencontre.r_niveau_min > MAX_NIVEAU) rencontre.r_niveau_min = MIN_NIVEAU;
+	if (rencontre.r_niveau_max < rencontre.r_niveau_min || rencontre.r_niveau_max > MAX_NIVEAU) rencontre.r_niveau_max = MAX_NIVEAU;
 
-    r->r_ID_espece = ID_espece;
-    r->r_niveau_min = niveau_min;
-    r->r_niveau_max = niveau_max;
+	*r = rencontre;
+
+	return r;
 }
 
 void supprRencontre (Rencontre r)
 {
-    free(r);
+	free(r);
+	r = 0;
 }
 
-ChainonRencontre creerChainonRencontre (Rencontre chainon, ChainonRencontre suivant)
+String serializeRencontre (Rencontre r)
 {
-    ChainonRencontre cr = NULL;
-    cr = (ChainonRencontre) malloc(sizeof(struct _chainon_rencontre));
+	String str = NULL;
 
-    CHECK_NULL_ERROR(cr)
+	CHECK_NULL(r)
+	str = sprintfSized("%d(%d@%d)", r->r_ID_espece, r->r_niveau_min, r->r_niveau_max);
+	CHECK_NULL(str)
 
-    initChainonRencontre(cr, chainon, suivant);
-
-    return cr;
+	return str;
 }
 
-void initChainonRencontre (ChainonRencontre cr, Rencontre chainon, ChainonRencontre suivant)
+int deserializeRencontre (Rencontre *r, String str)
 {
-    CHECK_NULL_ERROR(cr)
+	_rencontre rencontre;
+	int size = 0;
 
-    cr->cr_chainon = NULL;
-    cr->cr_chainon = creerRencontre(chainon->r_ID_espece, chainon->r_niveau_min, chainon->r_niveau_max);
+	CHECK_NULL(str)
+	sscanf(str, "%d(%d@%d)%n", &rencontre.r_ID_espece, &rencontre.r_niveau_min, &rencontre.r_niveau_max, &size);
+	*r = creerRencontre(rencontre);
 
-    cr->cr_suivant = suivant;
-
-    CHECK_NULL_ERROR(cr->cr_chainon)
+	return size;
 }
 
-void supprChainonRencontre (ChainonRencontre cr)
+void ajoutRencontre (ChainonRencontre *premier_chainon, _rencontre nouvelle_rencontre)
 {
-    if (cr->cr_suivant)
-        supprChainonRencontre(cr->cr_suivant);
+	ChainonRencontre cr = NULL;
+	cr = malloc(sizeof(*cr));
+	CHECK_NULL(cr)
 
-    supprRencontre(cr->cr_chainon);
-    free(cr);
+	cr->cr_chainon = creerRencontre(nouvelle_rencontre);
+	cr->cr_suivant = *premier_chainon;
 }
 
-ListeRencontres creerListeRencontres (ChainonRencontre premier, int taille)
+void supprChainonRencontre (ChainonRencontre chainon)
 {
-    ListeRencontres lr = NULL;
-    lr = (ListeRencontres) malloc(sizeof(ChainonRencontre));
+	CHECK_NULL(chainon)
 
-    CHECK_NULL_ERROR(lr)
-
-    initListeRencontres(lr, premier, taille);
-
-    return lr;
+	if (chainon->cr_suivant) supprChainonRencontre (chainon->cr_suivant);
+	
+	free(chainon);
+	chainon = NULL_POINTER;
 }
 
-void initListeRencontres (ListeRencontres lr, ChainonRencontre premier, int taille)
+ChainonRencontre copieChainonRencontre (ChainonRencontre chainon)
 {
-    CHECK_NULL_ERROR(lr)
-
-    if (taille < 0)
-    {
-        if (premier == NULL) taille = 0;
-        else taille = 1;
-    }
-
-    lr->lr_premier = premier;
-    lr->taille_liste = taille;
+	ChainonRencontre copie = NULL;
+	
+	while (chainon)
+	{
+		ajoutRencontre(&copie, *(chainon->cr_chainon));
+		chainon = chainon->cr_suivant;
+	}
+	
+	return copie;
 }
-
-void supprListeRencontres (ListeRencontres lr)
-{
-    supprChainonRencontre(lr->lr_premier);
-    free(lr);
-}
-
-void ajoutRencontre (ListeRencontres* lr, Rencontre nouvelle_rencontre)
-{
-    ChainonRencontre cr = NULL;
-    cr = creerChainonRencontre(nouvelle_rencontre, (*lr)->lr_premier);
-    (*lr)->lr_premier = cr;
-    (*lr)->taille_liste++;
-}
-*/

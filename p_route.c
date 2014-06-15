@@ -1,88 +1,109 @@
 #include "p_route.h"
-/*
-Route lireRencontres (String nom_route)
+
+Route *liste_routes = NULL;
+int nbr_routes = 0;
+
+void startRoutes ()
 {
-    Route r = NULL;
-    FILE* fichier_rencontres = NULL;
-    String r_nom_route = NULL;
-    ListeRencontres lr = NULL;
-    Rencontre r_rencontre = NULL;
-    Boolean trouve = FALSE;
-    int scan_ok = 0;
+	FILE* f_rencontres = NULL;
+	String line = NULL;
 
-    fichier_rencontres = fopen("rencontres.txt", "r");
-    CHECK_NULL_ERROR(fichier_rencontres)
+	f_rencontres = fopen("rencontres.dat", "r");
 
-    r_nom_route = malloc(32 * sizeof(char));
-    CHECK_NULL_ERROR(r_nom_route)
+	while ((line = fgetsSizing(f_rencontres)) != NULL)
+	{
+		liste_routes = realloc(liste_routes, (nbr_routes + 1) * sizeof(*liste_routes));
+		deserializeRoute(&liste_routes[nbr_routes], line);
+		nbr_routes++;
 
-    lr = creerListeRencontres(NULL, 0);
-    CHECK_NULL_ERROR(lr)
+		free(line);
+	}
 
-    r_rencontre = malloc(sizeof(struct _rencontre));
-    CHECK_NULL_ERROR(r_rencontre)
-
-    while (!trouve && fgets(r_nom_route, 32, fichier_rencontres))
-    {
-        r_nom_route[strlen(r_nom_route) - 1] = '\0';
-        if (strcmp(nom_route, r_nom_route) == 0)
-            trouve = TRUE;
-    }
-
-    if (!trouve)
-    {
-        puts("La route n'existe pas");
-        exit(EXIT_FAILURE);
-    }
-
-    do {
-        scan_ok = fscanf(fichier_rencontres, "%u %u %u", &r_rencontre->r_ID_espece, &r_rencontre->r_niveau_min, &r_rencontre->r_niveau_max);
-        if (scan_ok > 0) ajoutRencontre(&lr, r_rencontre);
-    } while ( scan_ok > 0 && !feof(fichier_rencontres) );
-
-    fclose(fichier_rencontres);
-    free(nom_route);
-    free(r_rencontre);
-
-    r = creerRoute(nom_route, lr);
-
-    CHECK_NULL_ERROR(r)
-
-    return r;
+	fclose(f_rencontres);
 }
 
-Route creerRoute (String nom, ListeRencontres rencontres)
+_route initRoute (int ID, String nom, ChainonRencontre premiere_rencontre)
 {
-    Route r = NULL;
-    r = (Route) malloc(sizeof(struct _route));
+	_route r;
 
-    CHECK_NULL_ERROR(r)
+	r.r_ID = ID;
+	r.r_nom = creerString(nom);
+	r.r_premiere_rencontre = copieChainonRencontre(premiere_rencontre);
 
-    initRoute(r, nom, rencontres);
-
-    return r;
+	return r;
 }
 
-void initRoute (Route r, String nom, ListeRencontres rencontres)
+Route creerRoute (_route route)
 {
-    CHECK_NULL_ERROR(r)
+	Route r = NULL;
+	r = (Route) malloc(sizeof(*r));
+	CHECK_NULL(r)
 
-    if (nom == NULL) nom = "Undefined";
+	if (route.r_ID < MIN_ID_ROUTE || route.r_ID > nbr_routes) route.r_ID = MIN_ID_ROUTE;
+	if (route.r_nom == NULL) route.r_nom = "Undefined";
 
-    r->r_nom = NULL;
-    r->r_nom = creerString(nom);
+	*r = route;
 
-    r->r_rencontres = NULL;
-    r->r_rencontres = rencontres;
-
-    CHECK_NULL_ERROR(r->r_nom)
-    CHECK_NULL_ERROR(r->r_rencontres)
+	return r;
 }
 
 void supprRoute (Route r)
 {
-    supprString(r->r_nom);
-    supprListeRencontres(r->r_rencontres);
-    free(r);
+	CHECK_NULL(r)
+	supprString(r->r_nom);
+	supprChainonRencontre(r->r_premiere_rencontre);
+	free(r);
+	r = NULL_POINTER;
 }
-*/
+
+String serializeRoute (Route r)
+{
+	String str = NULL, str_rencontre = NULL, str_liste_rencontres = NULL;
+	ChainonRencontre chainon = r->r_premiere_rencontre;
+
+	CHECK_NULL(r)
+	
+	str_liste_rencontres = serializeRencontre(chainon->cr_chainon);
+	chainon = chainon->cr_suivant;
+
+	while (chainon)
+	{
+		str_rencontre = serializeRencontre(chainon->cr_chainon);
+		str_liste_rencontres = realloc(str_liste_rencontres, (strlen(str_rencontre) + strlen(str_liste_rencontres) + 1)
+															* sizeof(*str_liste_rencontres));
+		strcat(str_liste_rencontres, str_rencontre);
+		free(str_rencontre);
+
+		chainon = chainon->cr_suivant;
+	}
+
+	str = sprintfSized("%d|%s|%s", r->r_ID, str_liste_rencontres, r->r_nom);
+	CHECK_NULL(str)
+
+	return str;
+}
+
+int deserializeRoute (Route *r, String str)
+{
+	_route route;
+	Rencontre rencontre = NULL;
+	int buf_size, size = 0;
+
+	CHECK_NULL(str)
+
+	sscanf(str + size, "%d|%n", &route.r_ID, &buf_size);
+	size += buf_size;
+
+	while ((buf_size = deserializeRencontre(&rencontre, str + size)) > 0)
+	{
+		size += (buf_size + 1); /* +1 pour le ";" separateur */
+		ajoutRencontre(&(route.r_premiere_rencontre), *rencontre);
+		free(rencontre);
+	}
+
+	route.r_nom = creerString(str + size);
+
+	*r = creerRoute(route);
+
+	return size;
+}

@@ -1,47 +1,49 @@
 #ifndef TYPES_H_INCLUDED
 #define TYPES_H_INCLUDED
 
-    #include <stdlib.h>
-    #include <stdio.h>
-    #include <string.h>
-    #include <errno.h>
-    #include <stdarg.h>
+	#include <stdlib.h>
+	#include <stdio.h>
+	#include <string.h>
+	#include <errno.h>
+	#include <stdarg.h>
 
-    #define STRINGIFY(X) #X
-    #define TO_STRING(X) STRINGIFY(X)
+	#define NULL_POINTER 0
 
-    #define CONTEXT "File     -> "__FILE__"\n\tLine     -> "TO_STRING(__LINE__)
+	#define STRINGIFY(X) #X
+	#define TO_STRING(X) STRINGIFY(X)
 
-    #define ENUM_SEVERITY(SELECTOR) \
-        SELECTOR(TRACE, )           \
-        SELECTOR(INFO, )            \
-        SELECTOR(WARNING, Warning)  \
-        SELECTOR(ERROR, Error)      \
-        SELECTOR(FATAL, Fatal error)
+	#define CONTEXT "File	 -> "__FILE__"\n\tLine	 -> "TO_STRING(__LINE__)
 
-    #define SEVERITY_ID(ENUM, STRING) ENUM,
-    #define SEVERITY_NAME(ENUM, STRING) #STRING,
+	#define ENUM_SEVERITY(SELECTOR) \
+		SELECTOR(TRACE, )		   \
+		SELECTOR(INFO, )			\
+		SELECTOR(WARNING, Warning)  \
+		SELECTOR(ERROR, Error)	  \
+		SELECTOR(FATAL, Fatal error)
 
-    typedef enum _boolean { FALSE, TRUE } Boolean;
-    typedef enum _severity { ENUM_SEVERITY(SEVERITY_ID) UNDEFINED } Severity;
-    typedef char* String;
+	#define SEVERITY_ID(ENUM, STRING) ENUM,
+	#define SEVERITY_NAME(ENUM, STRING) #STRING,
 
-    static const String severity_names[] = { ENUM_SEVERITY(SEVERITY_NAME) "Undefined" };
+	typedef enum _boolean { FALSE, TRUE } Boolean;
+	typedef enum _severity { ENUM_SEVERITY(SEVERITY_ID) UNDEFINED } Severity;
+	typedef char* String;
 
-    #define CHECK_NULL(element)                                  \
-        if ((element) == NULL) {                                 \
-            logError ("Null element", FATAL, CONTEXT, __func__); \
-            exit(EXIT_FAILURE);                                  \
-        }
+	static const String severity_names[] = { ENUM_SEVERITY(SEVERITY_NAME) "Undefined" };
 
-    String sprintfSized (const char* fmt, ...);
-    String fgetsSizing (FILE* stream);
+	#define CHECK_NULL(element)								  \
+		if ((element) == NULL) {								 \
+			logError ("Null element", FATAL, CONTEXT, __func__); \
+			exit(EXIT_FAILURE);								  \
+		}
 
-    String creerString (String texte);
-    void supprString (String s);
+	String sprintfSized (const char* fmt, ...);
+	String fgetsSizing (FILE* stream);
 
-    void logError (const String message, const Severity s, const String context, const char* appel);
-    void logInfo (const String message);
-    void logTrace (const char* fmt, ...);
+	String creerString (String texte);
+	void supprString (String s);
+
+	void logError (const String message, const Severity s, const String context, const char* appel);
+	void logInfo (const String message);
+	void logTrace (const char* fmt, ...);
 
 #endif
