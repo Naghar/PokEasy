@@ -42,14 +42,13 @@ String fgetsSizing (FILE* stream)
 	} while ( fgets(buffer, old_size + 1, stream) && buffer[strlen(buffer) - 1] != '\n' );
 
 	read[strlen(read) - 1] = '\0';
-	puts("Sortie normale");
 	return read;
 }
 
 String creerString (String texte)
 {
     String s = NULL;
-    s = malloc( strlen(texte) * sizeof(*s) );
+    s = malloc( (strlen(texte) + 1) * sizeof(*s) );
     CHECK_NULL(s)
 
     if (texte == NULL) texte = "Default";

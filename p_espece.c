@@ -15,17 +15,13 @@ void startEspeces ()
     line = fgetsSizing(f_stats_especes);
     free(line);
 
-    for(;;)
+    while ((line = fgetsSizing(f_stats_especes)) != NULL)
     {
-        if ((line = fgetsSizing(f_stats_especes)) != NULL)
-        {
-            nbr_especes++;
-            liste_especes = realloc(liste_especes, (nbr_especes + 1) * sizeof(*liste_especes));
-            deserializeEspece(&liste_especes[nbr_especes], "2 [260 30 60 90 60 60] Carapuce");
-            printf("%d -> %s (%d)\n", nbr_especes, line, strcmp(line, serializeEspece(liste_especes[nbr_especes])));
+		liste_especes = realloc(liste_especes, (nbr_especes + 1) * sizeof(*liste_especes));
+		deserializeEspece(&liste_especes[nbr_especes], line);
+		nbr_especes++;
 
-            free(line);
-        }
+		free(line);
     }
 
     fclose(f_stats_especes);
