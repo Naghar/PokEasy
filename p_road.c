@@ -25,8 +25,13 @@ void loadRoads ()
 
 	f_rencontres = fopen("data_encounters.dat", "r");
 
+	line = fgetsSizing(f_rencontres);
+	free(line);
+	line = fgetsSizing(f_rencontres);
+	free(line);
+
 	while ((line = fgetsSizing(f_rencontres)) != NULL)
-	{
+	{printf("=> %s\n", line);
 		roads_list = realloc(roads_list, (roads_number + 1) * sizeof(*roads_list));
 		unserializeRoad(&roads_list[roads_number], line);
 		roads_number++;

@@ -1,12 +1,12 @@
 /******************** #APPLICATION *********************************************
- *	@name	PokEasy                                                        *
+ *	@name	PokEasy                                                            *
  *                                                                             *
- *	@link	https://github.com/Naghar/PokEasy                              *
+ *	@link	https://github.com/Naghar/PokEasy                                  *
  *                                                                             *
- *	@author	Naghar (Rémi Godbille),                                        *
- *			VaubanParty (Yassine Badache)                          *
+ *	@author	Naghar (Rémi Godbille),                                            *
+ *			VaubanParty (Yassine Badache)                                      *
  *                                                                             *
- *	@desc	Command-line game based on the main Pokemon game series.       *
+ *	@desc	Command-line game based on the main Pokemon game series.           *
  ******************************************************************************/
 
 /******************** #SOURCE **************************************************
@@ -31,7 +31,7 @@ int main()
 	int i = 0;
 
 	loadSpecies();
-	/* loadRoads(); *** à débug */
+	loadRoads();
 	while (i < species_number)
 	{
 		printf("%d : %s\n", i, serializeSpecies(species_list[i]));
