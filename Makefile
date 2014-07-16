@@ -1,9 +1,9 @@
-CFLAGS=-W -Wall -ansi -pedantic
+CFLAGS=-W -Wall -ansi -pedantic -std=c99
 
 all: Pokeasy clean
 
-Pokeasy: main.o p_pokemon.o p_route.o p_rencontre.o p_espece.o p_stats.o types.o
-	gcc -o Pokeasy main.o p_pokemon.o p_route.o p_rencontre.o p_espece.o p_stats.o types.o $(CFLAGS)
+Pokeasy: main.o p_pokemon.o p_road.o p_encounter.o p_species.o p_stats.o types.o
+	gcc -o Pokeasy main.o p_pokemon.o p_road.o p_encounter.o p_species.o p_stats.o types.o $(CFLAGS)
 
 types.o: types.c
 	gcc -o types.o -c types.c $(CFLAGS)
@@ -11,16 +11,16 @@ types.o: types.c
 p_stats.o: p_stats.c types.h
 	gcc -o p_stats.o -c p_stats.c $(CFLAGS)
 
-p_espece.o: p_espece.c p_stats.h
-	gcc -o p_espece.o -c p_espece.c $(CFLAGS)
+p_species.o: p_species.c p_stats.h
+	gcc -o p_species.o -c p_species.c $(CFLAGS)
 
-p_rencontre.o: p_rencontre.c p_espece.h
-	gcc -o p_rencontre.o -c p_rencontre.c $(CFLAGS)
+p_encounter.o: p_encounter.c p_species.h
+	gcc -o p_encounter.o -c p_encounter.c $(CFLAGS)
 
-p_route.o: p_route.c p_rencontre.h
-	gcc -o p_route.o -c p_route.c $(CFLAGS)
+p_road.o: p_road.c p_encounter.h
+	gcc -o p_road.o -c p_road.c $(CFLAGS)
 
-p_pokemon.o: p_pokemon.c p_route.h
+p_pokemon.o: p_pokemon.c p_road.h
 	gcc -o p_pokemon.o -c p_pokemon.c $(CFLAGS)
 
 main.o: main.c p_pokemon.h
