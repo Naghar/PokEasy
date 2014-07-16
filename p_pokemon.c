@@ -1,13 +1,28 @@
+/******************** #SOURCE **************************************************
+ *	@name		p_pokemon.c
+ *	@header		p_pokemon.h
+ *	@desc		A Pokemon is a unique instance from a species.
+ *				The player uses a team of Pokemon to beat the game.
+ *
+ *	@function	$header
+ *
+ *	@global		$header
+ *
+ *	@depend		None
+ *
+ *	@stream		None
+ ******************************************************************************/
+
 #include "p_pokemon.h"
 /*
 Pokemon rencontreAleatoire(String nom_route)
 {
 	Pokemon p = NULL;
-	Route r = NULL;
-	ListeRencontres lr_read = NULL;
+	Road r = NULL;
+	ListeEncounters lr_read = NULL;
 	unsigned int alea, i = 0, niveau_alea, niveau_min, niveau_max, ID_alea;
 
-	r = lireRencontres(nom_route);
+	r = lireEncounters(nom_route);
 	CHECK_NULL_ERROR(r)
 
 	alea = rand() % r->r_rencontres->taille_liste;
@@ -26,7 +41,7 @@ Pokemon rencontreAleatoire(String nom_route)
 	niveau_alea = niveau_min + rand() % (niveau_max - niveau_min);
 	ID_alea = lr_read->lr_premier->cr_chainon->r_ID_espece;
 
-	supprRoute(r);
+	delRoad(r);
 printf("=> %d\n", ID_alea);
 	p = generePokemon(ID_alea, niveau_alea);
 	return p;
@@ -39,37 +54,37 @@ Pokemon generePokemon (int ID_espece, int niveau)
 	struct _espece e;
 	struct _stats EV, IV, tot, actu;
 
-	int c_vie, c_vit, c_att, c_def, c_aSp, c_dSp;
+	int c_HP, c_spd, c_atk, c_def, c_SpA, c_SpD;
 	float stat_multiplier;
 
 	e = lireCaracteristiques(ID_espece);
 	g = rand() % 2;
 
-	EV = creerStats(0, 0, 0, 0, 0, 0);
+	EV = newStats(0, 0, 0, 0, 0, 0);
 
 	for (i = 0; i < 6; i++)
 		r_IV[i] = 1 + rand() % 30;
-	IV = creerStats(r_IV[0], r_IV[1], r_IV[2], r_IV[3], r_IV[4], r_IV[5]);
+	IV = newStats(r_IV[0], r_IV[1], r_IV[2], r_IV[3], r_IV[4], r_IV[5]);
 
 	stat_multiplier = (float)niveau / MAX_NIVEAU;
 
-	c_vie = r_IV[0] + getVieBase(e) * stat_multiplier;
-	c_vit = r_IV[1] + getVitBase(e) * stat_multiplier;
-	c_att = r_IV[2] + getAttBase(e) * stat_multiplier;
+	c_HP = r_IV[0] + getHPBase(e) * stat_multiplier;
+	c_spd = r_IV[1] + getSpdBase(e) * stat_multiplier;
+	c_atk = r_IV[2] + getAtkBase(e) * stat_multiplier;
 	c_def = r_IV[3] + getDefBase(e) * stat_multiplier;
-	c_aSp = r_IV[4] + getASpBase(e) * stat_multiplier;
-	c_dSp = r_IV[5] + getDSpBase(e) * stat_multiplier;
+	c_SpA = r_IV[4] + getASpBase(e) * stat_multiplier;
+	c_SpD = r_IV[5] + getDSpBase(e) * stat_multiplier;
 
-	tot = creerStats(c_vie, c_vit, c_att, c_def, c_aSp, c_dSp);
-	actu = creerStats(c_vie, c_vit, c_att, c_def, c_aSp, c_dSp);
+	tot = newStats(c_HP, c_spd, c_atk, c_def, c_SpA, c_SpD);
+	actu = newStats(c_HP, c_spd, c_atk, c_def, c_SpA, c_SpD);
 
-	p = creerPokemon(e->e_nom, e, g, niveau, tot, actu, IV, EV);
+	p = newPokemon(e->e_nom, e, g, niveau, tot, actu, IV, EV);
 
-	supprEspece(e);
-	supprStats(EV);
-	supprStats(IV);
-	supprStats(tot);
-	supprStats(actu);
+	delSpecies(e);
+	delStats(EV);
+	delStats(IV);
+	delStats(tot);
+	delStats(actu);
 
 	return p;
 }
@@ -78,19 +93,19 @@ _pokemon initPokemon (String nom, _espece e, Genre g, int niveau, _stats tot, _s
 {
 	_pokemon p;
 
-	p.p_nom = creerString(nom);
-	p.p_espece = creerEspece(e);
+	p.p_nom = newString(nom);
+	p.p_species = newSpecies(e);
 	p.p_genre = g;
 	p.p_niveau = niveau;
-	p.p_stats_tot = creerStats(tot);
-	p.p_stats_actu = creerStats(actu);
-	p.p_IV = creerStats(IV);
-	p.p_EV = creerStats(EV);
+	p.p_stats_tot = newStats(tot);
+	p.p_stats_actu = newStats(actu);
+	p.p_IV = newStats(IV);
+	p.p_EV = newStats(EV);
 
 	return p;
 }
 
-Pokemon creerPokemon (_pokemon pokemon)
+Pokemon newPokemon (_pokemon pokemon)
 {
 	Pokemon p = NULL;
 	p = malloc(sizeof(*p));
@@ -104,14 +119,14 @@ Pokemon creerPokemon (_pokemon pokemon)
 	return p;
 }
 
-void supprPokemon (Pokemon p)
+void delPokemon (Pokemon p)
 {
-	supprString(p->p_nom);
-	supprEspece(p->p_espece);
-	supprStats(p->p_stats_tot);
-	supprStats(p->p_stats_actu);
-	supprStats(p->p_IV);
-	supprStats(p->p_EV);
+	delString(p->p_nom);
+	delSpecies(p->p_species);
+	delStats(p->p_stats_tot);
+	delStats(p->p_stats_actu);
+	delStats(p->p_IV);
+	delStats(p->p_EV);
 	free(p);
 	p = 0;
 }
@@ -133,7 +148,7 @@ String serializePokemon (Pokemon p)
 	return str;
 }
 
-int deserializePokemon (Pokemon *p, String s)
+int unserializePokemon (Pokemon *p, String s)
 {
 	_espece espece;
 	int buf_size, size = 0;
@@ -141,12 +156,12 @@ int deserializePokemon (Pokemon *p, String s)
 	CHECK_NULL(str)
 	sscanf(str + size, "%d [%n", &espece.e_ID, &buf_size);
 	size += buf_size;
-	buf_size = deserializeStats(&(espece.e_stats_base), str + size);
+	buf_size = unserializeStats(&(espece.e_stats_base), str + size);
 	size += buf_size;
 	sscanf(str + size, "] %n", &buf_size);
 	size += buf_size;
-	espece.e_nom = creerString(str + size);
-	*e = creerEspece(espece);
+	espece.e_nom = newString(str + size);
+	*e = newSpecies(espece);
 
 	return size;
 }

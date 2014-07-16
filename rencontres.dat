@@ -1,4 +1,0 @@
--- Liste des rencontres possibles par route
--- Format : ID_route|ID_espece_1(niveau_min@niveau_max);...ID_espece_n(niveau_min@niveau_max)|Nom_route
-1|1(5@10)|Route 1
-2|4(2@3);5(4@5)|Route 2

@@ -1,0 +1,8 @@
+-- Caracteristiques de base de toutes les especes
+-- Format : ID_espece|[Vie;Vitesse;Attaque;Defense;AttSpe;DefSpe]|Nom_espece
+0|[1;1;1;1;1;1]|MissingNo
+1|[200;90;90;30;90;60]|Salameche
+2|[260;30;60;90;60;60]|Carapuce
+3|[290;30;30;90;30;90]|Bulbizarre
+4|[160;90;60;30;30;30]|Rattata
+5|[160;60;60;60;30;30]|Roucool

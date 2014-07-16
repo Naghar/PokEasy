@@ -1,5 +1,26 @@
+/******************** #SOURCE **************************************************
+ *	@name		types.c
+ *	@header		types.h
+ *	@desc		Generic functions and data not specific to PokEasy.
+ *
+ *	@function	$header
+ *
+ *	@global		$header
+ *
+ *	@depend		None
+ *
+ *	@stream		log_errors.log,
+ *				log_infos.log,
+ *				log_trace.log
+ ******************************************************************************/
+
 #include "types.h"
 
+/******************** #FUNCTION ************************************************
+ *	@name	sprintfSized
+ *	@desc	sprintf replacement with dynamically calculated string length.
+ *	@decl	types.h
+ */
 String sprintfSized (const char* fmt, ...)
 {
 	va_list ap;
@@ -15,6 +36,11 @@ String sprintfSized (const char* fmt, ...)
 	return (String) str;
 }
 
+/******************** #FUNCTION ************************************************
+ *	@name	fgetsSizing
+ *	@desc	fgets replacement with dynamically calculated string length.
+ *	@decl	types.h
+ */
 String fgetsSizing (FILE* stream)
 {
 	String read = NULL, buffer = NULL;
@@ -45,25 +71,42 @@ String fgetsSizing (FILE* stream)
 	return read;
 }
 
-String creerString (String texte)
+/******************** #FUNCTION ************************************************
+ *	@name	newString
+ *	@desc	Allocate memory for a string and initialize it.
+ *	@decl	types.h
+ */
+String newString (String content)
 {
 	String s = NULL;
-	s = malloc( (strlen(texte) + 1) * sizeof(*s) );
+
+	if (content == NULL) content = "";
+
+	s = malloc( (strlen(content) + 1) * sizeof(*s) );
 	CHECK_NULL(s)
 
-	if (texte == NULL) texte = "Default";
-	strcpy(s, texte);
+	strcpy(s, content);
 
 	return s;
 }
 
-void supprString (String s)
+/******************** #FUNCTION ************************************************
+ *	@name	delString
+ *	@desc	Deallocate a string in memory.
+ *	@decl	types.h
+ */
+void delString (String s)
 {
 	CHECK_NULL(s)
 	free(s);
 	s = NULL_POINTER;
 }
 
+/******************** #FUNCTION ************************************************
+ *	@name	logError
+ *	@desc	Write critical events to a file and shut the application if needed.
+ *	@decl	types.h
+ */
 void logError (const String message, Severity s, const String context, const char* appel)
 {
 	FILE *f_stderr = fopen("log_errors.log", "a");
@@ -80,6 +123,11 @@ void logError (const String message, Severity s, const String context, const cha
 	fclose(f_stderr);
 }
 
+/******************** #FUNCTION ************************************************
+ *	@name	logInfo
+ *	@desc	Track user inputs in a file.
+ *	@decl	types.h
+ */
 void logInfo (const String message)
 {
 	FILE *f_stdout = fopen("log_infos.log", "a");
@@ -90,6 +138,11 @@ void logInfo (const String message)
 	fclose(f_stdout);
 }
 
+/******************** #FUNCTION ************************************************
+ *	@name	logTrace
+ *	@desc	Track function calls. Only used for debug.
+ *	@decl	types.h
+ */
 void logTrace (const char* fmt, ...)
 {
 	va_list ap;
