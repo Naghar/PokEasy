@@ -33,7 +33,7 @@ String sprintfSized (const char* fmt, ...)
 
 	str = malloc(str_size + 1);
 	va_start(ap, fmt);		
-		vsnprintf(str, str_size + 1, fmt, ap);  /* Reads into str with the right size */
+		vsnprintf(str, str_size + 1, fmt, ap);  /* Reads into str with the right size */str[str_size] = '\0';
 
 	va_end(ap);
 

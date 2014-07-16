@@ -60,6 +60,7 @@ String serializeStats (Stats s)
 	String str = NULL;
 
 	CHECK_NULL(s)
+printf("===>%d;%d;%d;%d;%d;%d\n", s->s_HP, s->s_spd, s->s_atk, s->s_def, s->s_SpA, s->s_SpD);
 	str = sprintfSized("%d;%d;%d;%d;%d;%d", s->s_HP, s->s_spd, s->s_atk, s->s_def, s->s_SpA, s->s_SpD);
 
 	CHECK_NULL(str)
