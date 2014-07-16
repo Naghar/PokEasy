@@ -31,7 +31,7 @@ void loadRoads ()
 	free(line);
 
 	while ((line = fgetsSizing(f_rencontres)) != NULL)
-	{printf("=> %s\n", line);
+	{
 		roads_list = realloc(roads_list, (roads_number + 1) * sizeof(*roads_list));
 		unserializeRoad(&roads_list[roads_number], line);
 		roads_number++;
@@ -82,8 +82,9 @@ String serializeRoad (Road r)
 	ChainonEncounter chainon = r->r_premiere_rencontre;
 
 	CHECK_NULL(r)
-	
+
 	str_liste_rencontres = serializeEncounter(chainon->cr_chainon);
+
 	chainon = chainon->cr_suivant;
 
 	while (chainon)
@@ -109,6 +110,7 @@ int unserializeRoad (Road *r, String str)
 	Encounter rencontre = NULL;
 	int buf_size, size = 0;
 
+	route.r_premiere_rencontre = NULL;
 	CHECK_NULL(str)
 
 	sscanf(str + size, "%d|%n", &route.r_ID, &buf_size);

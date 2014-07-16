@@ -50,7 +50,7 @@ String serializeEncounter (Encounter r)
 {
 	String str = NULL;
 
-	CHECK_NULL(r)
+	CHECK_NULL(r)printf("%d %d %d", r->r_ID_espece, r->r_niveau_min, r->r_niveau_max);
 	str = sprintfSized("%d(%d@%d)", r->r_ID_espece, r->r_niveau_min, r->r_niveau_max);
 	CHECK_NULL(str)
 
@@ -64,7 +64,9 @@ int unserializeEncounter (Encounter *r, String str)
 
 	CHECK_NULL(str)
 	sscanf(str, "%d(%d@%d)%n", &rencontre.r_ID_espece, &rencontre.r_niveau_min, &rencontre.r_niveau_max, &size);
-	*r = newEncounter(rencontre);
+
+	if (size > 0)
+		*r = newEncounter(rencontre);
 
 	return size;
 }
@@ -77,6 +79,7 @@ void ajoutEncounter (ChainonEncounter *premier_chainon, _rencontre nouvelle_renc
 
 	cr->cr_chainon = newEncounter(nouvelle_rencontre);
 	cr->cr_suivant = *premier_chainon;
+	*premier_chainon = cr;
 }
 
 void delChainonEncounter (ChainonEncounter chainon)

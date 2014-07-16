@@ -28,7 +28,7 @@
 
 int main()
 {
-	int i = 0;
+	int i = 0, j = 0;
 
 	loadSpecies();
 	loadRoads();
@@ -36,6 +36,11 @@ int main()
 	{
 		printf("%d : %s\n", i, serializeSpecies(species_list[i]));
 		i++;
+	}
+	while (j < roads_number)
+	{
+		printf("%d : %s\n", j, serializeRoad(roads_list[j]));
+		j++;
 	}
 
 	return 0;
