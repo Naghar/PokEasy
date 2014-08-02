@@ -18,7 +18,7 @@
 Species *species_list = NULL;
 int species_number = 0;
 
-void loadSpecies ()
+void* loadSpecies ()
 {
 	FILE* f_stats_especes = NULL;
 	String line = NULL;
@@ -40,6 +40,7 @@ void loadSpecies ()
 	}
 
 	fclose(f_stats_especes);
+	return NULL;
 }
 
 _espece initSpecies (int ID, String nom, _stats stats_base)

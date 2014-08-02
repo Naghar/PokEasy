@@ -38,6 +38,7 @@
 #include <string.h>
 #include <errno.h>
 #include <stdarg.h>
+#include <pthread.h>
 
 /******************** #MACRO ***************************************************
  *	@name	TO_STRING

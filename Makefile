@@ -1,9 +1,9 @@
-CFLAGS=-W -Wall -ansi -pedantic -std=c99
+CFLAGS=-W -Wall -ansi -pedantic -std=c99 -pthread
 
 all: Pokeasy clean
 
 Pokeasy: main.o p_pokemon.o p_road.o p_encounter.o p_species.o p_stats.o types.o
-	gcc -o Pokeasy main.o p_pokemon.o p_road.o p_encounter.o p_species.o p_stats.o types.o $(CFLAGS)
+	gcc -lpthread -o Pokeasy main.o p_pokemon.o p_road.o p_encounter.o p_species.o p_stats.o types.o $(CFLAGS)
 
 types.o: types.c
 	gcc -o types.o -c types.c $(CFLAGS)

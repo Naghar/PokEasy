@@ -29,19 +29,26 @@
 int main()
 {
 	int i = 0, j = 0;
+	pthread_t t_species, t_roads;
 
-	loadSpecies();
-	loadRoads();
+	pthread_create (&t_species, NULL, loadSpecies, NULL);
+	pthread_create (&t_roads, NULL, loadRoads, NULL);
+
+	pthread_join (t_species, NULL);
+
 	while (i < species_number)
 	{
 		printf("%d : %s\n", i, serializeSpecies(species_list[i]));
 		i++;
 	}
+
+	pthread_join (t_roads, NULL);
+
 	while (j < roads_number)
 	{
 		printf("%d : %s\n", j, serializeRoad(roads_list[j]));
 		j++;
 	}
 
-	return 0;
+	return EXIT_SUCCESS;
 }

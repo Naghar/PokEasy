@@ -43,7 +43,7 @@
 	extern Species* species_list;
 	extern int species_number;
 
-	void loadSpecies ();
+	void* loadSpecies ();
 
 	_espece initSpecies (int ID, String nom, _stats stats_base);
 	Species newSpecies (_espece espece);

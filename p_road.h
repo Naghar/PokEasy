@@ -37,7 +37,7 @@
 	extern Road* roads_list;
 	extern int roads_number;
 
-	void loadRoads ();
+	void* loadRoads ();
 
 	_route initRoad (int ID, String nom, ChainonEncounter premiere_rencontre);
 	Road newRoad (_route route);

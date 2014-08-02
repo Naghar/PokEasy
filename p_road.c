@@ -18,7 +18,7 @@
 Road *roads_list = NULL;
 int roads_number = 0;
 
-void loadRoads ()
+void* loadRoads ()
 {
 	FILE* f_rencontres = NULL;
 	String line = NULL;
@@ -40,6 +40,7 @@ void loadRoads ()
 	}
 
 	fclose(f_rencontres);
+	return NULL;
 }
 
 _route initRoad (int ID, String nom, ChainonEncounter premiere_rencontre)
